@@ -23,7 +23,8 @@ class Settings(BaseSettings):
     DATABASE_MAX_OVERFLOW: int = 10
     DATABASE_POOL_TIMEOUT: int = 30
     DATABASE_ECHO: bool = False
-    DATABASE_URL: str = "postgresql://localhost/siriusjobs_v2"
+    # Change from MySQL to PostgreSQL
+    DATABASE_URL: str = os.getenv("DATABASE_URL", "postgresql://localhost/siriusjobs_v2")
     @property
     def database_url_with_ssl(self) -> str:
         """Add SSL requirement for Render"""
@@ -86,4 +87,5 @@ try:
 except Exception as e:
     print(f"❌ Error loading configuration: {e}")
     print("Please check your .env file and ensure all required variables are set.")
+
     raisepython
