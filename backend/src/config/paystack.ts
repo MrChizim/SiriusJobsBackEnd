@@ -181,13 +181,12 @@ export const paystackClient = new PaystackClient();
  */
 export const PAYMENT_AMOUNTS = {
   WORKER_SUBSCRIPTION: 1000, // ₦1,000 monthly
-  RECOMMENDED_BADGE: 5000, // ₦5,000 one-time
-  CONSULTATION_FEE: 3000, // ₦3,000 per session
+  CONSULTATION_FEE: 3000, // ₦3,000 base (30 min) — frontend calculates total based on duration
   PROFESSIONAL_EARNING: 2500, // ₦2,500 (professional gets this)
   PLATFORM_FEE: 500, // ₦500 (platform keeps this)
-  MERCHANT_3MONTHS: 10000, // ₦10,000
-  MERCHANT_6MONTHS: 19000, // ₦19,000 (5% discount)
-  MERCHANT_12MONTHS: 36000, // ₦36,000 (10% discount)
+  MERCHANT_3MONTHS: 30000,  // ₦30,000 (₦10,000/month × 3)
+  MERCHANT_6MONTHS: 57000,  // ₦57,000 (₦9,500/month × 6, 5% discount)
+  MERCHANT_12MONTHS: 108000, // ₦108,000 (₦9,000/month × 12, 10% discount)
   JOB_POST: 1000, // ₦1,000 per job post (all user types)
 };
 

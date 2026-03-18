@@ -134,31 +134,31 @@ merchantProfileSchema.index({ 'subscription.status': 1 });
  * All packages have same features - only difference is price discount
  */
 merchantProfileSchema.methods.calculateSubscription = function(packageType: MerchantPackage) {
-  const basePrice = 10000; // ₦10,000 for 3 months
-  const maxImages = 20; // All packages get same max images
+  const monthlyRate = 10000; // ₦10,000/month
+  const maxImages = 20;
 
   switch (packageType) {
     case '3months':
       return {
-        amount: basePrice,
+        amount: 30000,  // ₦10,000 × 3
         duration: 3,
         maxImages,
       };
     case '6months':
       return {
-        amount: basePrice * 2 * 0.95, // 5% discount = ₦19,000
+        amount: 57000,  // 5% discount off ₦60,000
         duration: 6,
         maxImages,
       };
     case '12months':
       return {
-        amount: basePrice * 4 * 0.90, // 10% discount = ₦36,000
+        amount: 108000, // 10% discount off ₦120,000
         duration: 12,
         maxImages,
       };
     default:
       return {
-        amount: basePrice,
+        amount: monthlyRate * 3,
         duration: 3,
         maxImages,
       };

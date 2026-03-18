@@ -140,7 +140,7 @@ export const initializeConsultationPayment = async (req: any, res: any) => {
       currentDuration: durationMs,
       durationHours,
       pricePerHour,
-      minimumDuration: 3600000,
+      minimumDuration: 1800000, // 30 minutes
       sessionToken,
       isExtended: false,
       extensionCount: 0,

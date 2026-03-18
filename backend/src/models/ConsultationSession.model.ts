@@ -116,17 +116,17 @@ const consultationSessionSchema = new Schema<IConsultationSession>(
     selectedDuration: {
       type: Number,
       required: true,
-      min: 3600000, // Minimum 1 hour
+      min: 1800000, // Minimum 30 minutes
     },
     currentDuration: {
       type: Number,
       required: true,
-      min: 3600000,
+      min: 1800000,
     },
     durationHours: {
       type: Number,
       required: true,
-      min: 1,
+      min: 0.5, // 30 minutes minimum
     },
     pricePerHour: {
       type: Number,
@@ -135,7 +135,7 @@ const consultationSessionSchema = new Schema<IConsultationSession>(
     },
     minimumDuration: {
       type: Number,
-      default: 3600000, // 1 hour
+      default: 1800000, // 30 minutes
     },
     
     startedAt: {
