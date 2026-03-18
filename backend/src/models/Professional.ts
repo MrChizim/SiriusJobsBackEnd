@@ -5,7 +5,7 @@ export interface IProfessional extends Document {
   email: string;
   firstName: string;
   lastName: string;
-  profession: 'DOCTOR' | 'LAWYER';
+  profession: 'DOCTOR' | 'LAWYER' | 'THERAPIST';
   specialization: string;
   licenseNumber: string;
   regulatoryBody: string;
@@ -59,7 +59,7 @@ const ProfessionalSchema = new Schema<IProfessional>({
   email: { type: String, required: true, unique: true },
   firstName: { type: String, required: true },
   lastName: { type: String, required: true },
-  profession: { type: String, enum: ['DOCTOR', 'LAWYER'], required: true },
+  profession: { type: String, enum: ['DOCTOR', 'LAWYER', 'THERAPIST'], required: true },
   specialization: { type: String, required: true },
   licenseNumber: { type: String, required: true },
   regulatoryBody: { type: String, required: true, default: 'Not Provided' },

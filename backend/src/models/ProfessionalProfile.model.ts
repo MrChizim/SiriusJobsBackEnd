@@ -1,6 +1,6 @@
 /**
  * Professional Profile Model
- * For Doctors and Lawyers offering consultation services
+ * For Doctors, Lawyers, and Therapists offering consultation services
  */
 
 import mongoose, { Schema, Model, Document } from 'mongoose';
@@ -22,7 +22,7 @@ const professionalProfileSchema = new Schema<IProfessionalProfileDocument>(
     professionalType: {
       type: String,
       required: false, // Made optional - to be filled in dashboard
-      enum: ['doctor', 'lawyer'],
+      enum: ['doctor', 'lawyer', 'therapist'],
     },
 
     licenseNumber: {

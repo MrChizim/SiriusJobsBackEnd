@@ -78,7 +78,7 @@ export const uploadLicense = asyncHandler(async (req: any, res: Response) => {
   const userId = req.user!.userId;
   
   const licenseSchema = z.object({
-    professionalType: z.enum(['doctor', 'lawyer']),
+    professionalType: z.enum(['doctor', 'lawyer', 'therapist']),
     licenseNumber: z.string().min(4),
     licenseDocumentUrl: z.string().url(),
     specialization: z.string().optional(),

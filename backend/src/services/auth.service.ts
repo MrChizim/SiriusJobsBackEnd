@@ -21,7 +21,7 @@ import { sendPasswordResetEmail } from './email.service';
  * Format user response for frontend
  * Transforms backend format to match frontend session-utils.js expectations
  */
-const formatAuthResponse = (user: any, tokens: { accessToken: string; refreshToken: string }) => {
+const formatAuthResponse = (user: any, tokens: { accessToken: string; refreshToken: string }, professionalType?: string) => {
   // Split name into firstName and lastName
   const nameParts = (user.name || '').trim().split(/\s+/);
   const firstName = nameParts[0] || '';
@@ -31,7 +31,7 @@ const formatAuthResponse = (user: any, tokens: { accessToken: string; refreshTok
   const roleMap: Record<AccountType, string> = {
     worker: 'ARTISAN',
     employer: 'EMPLOYER',
-    professional: 'DOCTOR', // Can be DOCTOR or LAWYER - frontend handles
+    professional: professionalType === 'therapist' ? 'THERAPIST' : professionalType === 'lawyer' ? 'LAWYER' : 'DOCTOR',
     merchant: 'MERCHANT',
     client: 'CLIENT',
   };
@@ -124,7 +124,7 @@ export const registerUser = async (userData: {
   user.refreshToken = tokens.refreshToken;
   await user.save();
 
-  return formatAuthResponse(user, tokens);
+  return formatAuthResponse(user, tokens, userData.professionalType);
 };
 
 /**
@@ -169,7 +169,14 @@ export const loginUser = async (identifier: string, password: string) => {
   user.refreshToken = tokens.refreshToken;
   await user.save();
 
-  return formatAuthResponse(user, tokens);
+  // Look up professionalType so login returns the correct role (DOCTOR/LAWYER/THERAPIST)
+  let professionalType: string | undefined;
+  if (user.accountType === 'professional') {
+    const proProfile = await ProfessionalProfile.findOne({ userId: user._id!.toString() }).select('professionalType').lean();
+    professionalType = (proProfile as any)?.professionalType;
+  }
+
+  return formatAuthResponse(user, tokens, professionalType);
 };
 
 /**

@@ -6,7 +6,7 @@
 // NOTE: "client" is used for anonymous consultation seekers with a username + password.
 export type AccountType = 'worker' | 'employer' | 'professional' | 'merchant' | 'client';
 
-export type ProfessionalType = 'doctor' | 'lawyer';
+export type ProfessionalType = 'doctor' | 'lawyer' | 'therapist';
 
 export type SubscriptionStatus = 'active' | 'expired' | 'pending';
 
