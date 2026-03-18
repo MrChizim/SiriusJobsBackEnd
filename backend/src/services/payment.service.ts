@@ -246,7 +246,7 @@ const processWorkerSubscription = async (payment: any) => {
   // Update subscription
   const startDate = new Date();
   const endDate = new Date();
-  endDate.setMonth(endDate.getMonth() + 1); // 1 month subscription
+  endDate.setDate(endDate.getDate() + 30); // 30-day subscription
   
   workerProfile.subscription.status = 'active';
   workerProfile.subscription.startDate = startDate;
@@ -324,7 +324,7 @@ const processMerchantPackage = async (payment: any) => {
   
   const startDate = new Date();
   const endDate = new Date();
-  endDate.setMonth(endDate.getMonth() + packageDetails.duration);
+  endDate.setDate(endDate.getDate() + (packageDetails.duration * 30));
   
   merchantProfile.subscription.status = 'active';
   merchantProfile.subscription.startDate = startDate;

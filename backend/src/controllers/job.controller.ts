@@ -14,6 +14,7 @@ import { asyncHandler } from '../middleware/error.middleware';
 import { AuthRequest } from '../middleware/auth.middleware';
 import * as analyticsService from '../services/analytics.service';
 import { sendJobApplicationNotification } from '../services/email.service';
+import { Payment } from '../models/Payment.model';
 import { AlertSubscription } from '../models/AlertSubscription.model';
 import { Notification } from '../models/Notification.model';
 import { events } from '../services/event-bus';
@@ -40,8 +41,21 @@ export const createJob = asyncHandler(async (req: any, res: Response) => {
     return sendError(res, 'Validation failed', 400, validation.error.errors);
   }
 
-  // TODO: Verify payment reference for ₦1,000 job post fee
-  // For now, allowing job creation (payment verification will be added)
+  // Verify payment reference for ₦1,000 job post fee
+  if (!validation.data.paymentReference) {
+    return sendError(res, 'Payment reference is required to post a job', 402);
+  }
+
+  const jobPayment = await Payment.findOne({
+    paystackReference: validation.data.paymentReference,
+    userId,
+    paymentType: 'job_post',
+    status: 'completed',
+  });
+
+  if (!jobPayment) {
+    return sendError(res, 'Valid completed payment is required to post a job', 402);
+  }
 
   // Create job - employerId now can be any user type
   const job = await Job.create({

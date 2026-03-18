@@ -8,6 +8,7 @@ import { z } from 'zod';
 import { ProfessionalProfile } from '../models/ProfessionalProfile.model';
 import { User } from '../models/User.model';
 import { ConsultationSession } from '../models/ConsultationSession.model';
+import { Message } from '../models/Message';
 import { Review } from '../models/Review.model';
 import { sendSuccess, sendError, sendNotFound } from '../utils/response.util';
 import { asyncHandler } from '../middleware/error.middleware';
@@ -304,13 +305,13 @@ export const getSessionMessages = asyncHandler(async (req: any, res: Response) =
   }
   
   // Verify this professional owns the session
-  if (session.professionalId !== userId) {
+  if (session.professionalId.toString() !== userId) {
     return sendError(res, 'You do not have permission to view this session', 403);
   }
-  
-  return sendSuccess(res, {
-    messages: session.messageCount || [],
-  });
+
+  const messages = await Message.find({ sessionId: session._id }).sort({ createdAt: 1 });
+
+  return sendSuccess(res, { messages });
 });
 
 /**

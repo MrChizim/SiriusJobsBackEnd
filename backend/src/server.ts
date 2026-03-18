@@ -127,7 +127,7 @@ async function bootstrap() {
         if (session.status === 'pending') {
           session.status = 'active';
           session.startedAt = new Date();
-          session.endsAt = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24 hours
+          session.endsAt = new Date(Date.now() + (session.durationHours ?? 1) * 60 * 60 * 1000);
         }
 
         await session.save();

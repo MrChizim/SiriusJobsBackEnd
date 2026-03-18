@@ -3,6 +3,8 @@
  * Business logic for user authentication and authorization
  */
 
+import crypto from 'crypto';
+import jwt from 'jsonwebtoken';
 import { User } from '../models/User.model';
 import { WorkerProfile } from '../models/WorkerProfile.model';
 import { EmployerProfile } from '../models/EmployerProfile.model';
@@ -13,6 +15,7 @@ import { generateTokenPair } from '../utils/jwt.util';
 import { validatePassword } from '../utils/password.util';
 import { AccountType } from '../types';
 import { AppError } from '../middleware/error.middleware';
+import { sendPasswordResetEmail } from './email.service';
 
 /**
  * Format user response for frontend
@@ -343,9 +346,6 @@ export const getUserProfile = async (userId: string, accountType: AccountType) =
  * @returns Success status
  */
 export const verifyUserEmail = async (token: string) => {
-  const crypto = require('crypto');
-  const jwt = require('jsonwebtoken');
-  
   try {
     // Decode verification token
     const decoded = jwt.verify(token, process.env.JWT_SECRET || 'change-me') as { userId: string };
@@ -374,10 +374,6 @@ export const verifyUserEmail = async (token: string) => {
  * @param email - User email
  */
 export const requestPasswordReset = async (email: string) => {
-  const crypto = require('crypto');
-  const jwt = require('jsonwebtoken');
-  const { sendPasswordResetEmail } = require('./email.service');
-  
   // Find user (don't reveal if user exists for security)
   const user = await User.findOne({ email: email.toLowerCase() });
   if (!user) {
@@ -405,8 +401,6 @@ export const requestPasswordReset = async (email: string) => {
  * @param newPassword - New password
  */
 export const resetUserPassword = async (token: string, newPassword: string) => {
-  const jwt = require('jsonwebtoken');
-  
   try {
     // Verify token
     const decoded = jwt.verify(token, process.env.JWT_SECRET || 'change-me') as { 
