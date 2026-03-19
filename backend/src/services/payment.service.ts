@@ -50,29 +50,11 @@ export const initializeWorkerSubscription = async (userId: string, email: string
  * @returns Payment initialization data
  */
 export const initializeRecommendedBadge = async (
-  userId: string,
-  email: string,
-  guarantorInfo: { name: string; phone: string; email: string }
-) => {
-  const amount = PAYMENT_AMOUNTS.RECOMMENDED_BADGE;
-  
-  const metadata = createPaymentMetadata(userId, 'worker', 'recommended_badge', {
-    guarantorInfo,
-  });
-  
-  const response = await paystackClient.initializeTransaction(email, amount, metadata);
-  
-  await Payment.create({
-    userId,
-    accountType: 'worker',
-    paymentType: 'recommended_badge',
-    amount,
-    paystackReference: response.data.reference,
-    status: 'pending',
-    metadata,
-  });
-  
-  return response.data;
+  _userId: string,
+  _email: string,
+  _guarantorInfo: { name: string; phone: string; email: string }
+): Promise<never> => {
+  throw new Error('Recommended badge feature has been removed.');
 };
 
 /**
