@@ -168,7 +168,7 @@ const consultationSessionSchema = new Schema<IConsultationSession>(
       additionalHours: {
         type: Number,
         required: true,
-        min: 1,
+        min: 0.5,
       },
       additionalAmount: {
         type: Number,
@@ -258,8 +258,8 @@ consultationSessionSchema.methods.extendSession = function(
     throw new Error('Only active sessions can be extended');
   }
   
-  if (additionalHours < 1) {
-    throw new Error('Extension must be at least 1 hour');
+  if (additionalHours < 0.5) {
+    throw new Error('Extension must be at least 30 minutes');
   }
   
   const additionalMs = additionalHours * 3600000;

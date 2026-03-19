@@ -9,9 +9,9 @@ const PAYSTACK_SECRET_KEY = process.env.PAYSTACK_SECRET_KEY || '';
 const JWT_SECRET = process.env.JWT_SECRET || 'default-secret';
 
 // Pricing configuration
-const DEFAULT_PRICE_PER_HOUR = 5000; // 5000 kobo = ₦50 per hour (adjust as needed)
-const MINIMUM_HOURS = 1;
-const MAXIMUM_HOURS = 8; // Optional: limit maximum duration
+const DEFAULT_PRICE_PER_HOUR = 300000; // 300000 kobo = ₦3,000 per hour (₦1,500 per 30 min)
+const MINIMUM_HOURS = 0.5; // 30 minutes minimum
+const MAXIMUM_HOURS = 8;
 
 interface PaystackVerifyResponse {
   status: boolean;
@@ -211,20 +211,29 @@ export const initializeConsultationPayment = async (req: any, res: any) => {
  */
 export const initializeSessionExtension = async (req: any, res: any) => {
   try {
-    const { sessionId, additionalHours, email } = req.body;
+    // Accept either additionalMinutes (frontend) or additionalHours (legacy)
+    const { sessionId, additionalHours: rawHours, additionalMinutes, email } = req.body;
+
+    // Resolve to hours (fractions supported: 0.5 = 30 min)
+    let additionalHours: number;
+    if (additionalMinutes != null) {
+      additionalHours = additionalMinutes / 60;
+    } else {
+      additionalHours = rawHours;
+    }
 
     // Validation
     if (!sessionId || !additionalHours) {
       return res.status(400).json({
         success: false,
-        message: 'Session ID and additional hours are required',
+        message: 'Session ID and duration are required',
       });
     }
 
-    if (additionalHours < 1) {
+    if (additionalHours < 0.5) {
       return res.status(400).json({
         success: false,
-        message: 'Extension must be at least 1 hour',
+        message: 'Extension must be at least 30 minutes',
       });
     }
 
