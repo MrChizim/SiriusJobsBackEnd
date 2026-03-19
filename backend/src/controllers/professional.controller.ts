@@ -244,24 +244,25 @@ export const bookConsultation = asyncHandler(async (req: any, res: Response) => 
     return sendError(res, 'Payment verification failed', 400);
   }
   
-  // Get the created session from payment processing
-  const session = await ConsultationSession.findOne({ 
-    paymentId: payment._id!.toString() 
+  // Get the created session from payment processing (keyed by paymentReference)
+  const session = await ConsultationSession.findOne({
+    paymentReference: validation.data.paystackReference,
   });
-  
+
   if (!session) {
     return sendError(res, 'Failed to create consultation session', 500);
   }
-  
+
   // Track consultation unlock
   await analyticsService.trackConsultationUnlock(professionalId);
-  
+
   // Send session details to client via email
   const user = await User.findById(professionalId);
   await sendConsultationSessionEmail(
     validation.data.clientEmail,
     session.sessionToken,
-    user?.name || 'Professional'
+    user?.name || 'Professional',
+    session._id.toString()
   );
   
   return sendSuccess(res, {

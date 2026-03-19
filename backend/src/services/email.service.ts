@@ -128,20 +128,24 @@ export const sendSubscriptionExpiryReminder = async (
 export const sendConsultationSessionEmail = async (
   email: string,
   sessionToken: string,
-  professionalName: string
+  professionalName: string,
+  sessionId?: string
 ) => {
   const subject = 'Your Consultation Session is Ready';
-  const sessionLink = `${env.FRONTEND_URL}/consultation/session/${sessionToken}`;
-  
+  // Link goes to the session page with the sessionId; token is stored in localStorage on the verify page
+  const sessionLink = sessionId
+    ? `${env.FRONTEND_URL}/consultation-session.html?sessionId=${sessionId}`
+    : `${env.FRONTEND_URL}/consultation-session.html`;
+
   const body = `
     <h1>Your Consultation is Ready!</h1>
-    <p>You can now start your 24-hour consultation session with ${professionalName}.</p>
-    <p><strong>Session Link:</strong></p>
-    <a href="${sessionLink}">${sessionLink}</a>
-    <p><strong>Important:</strong> This session expires in 24 hours.</p>
-    <p>Save this link to access your session at any time.</p>
+    <p>Your paid consultation session with ${professionalName} is now active.</p>
+    <p><strong>Click the link below to enter your session:</strong></p>
+    <p><a href="${sessionLink}">${sessionLink}</a></p>
+    <p><strong>Important:</strong> Save this link — it is your private access to this session. The timer starts when you open it.</p>
+    <p>Sessions are text-only. You can extend your session by 1-hour blocks from inside the chat.</p>
   `;
-  
+
   await sendEmail(email, subject, body);
 };
 
