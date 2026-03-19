@@ -80,6 +80,11 @@ const professionalProfileSchema = new Schema<IProfessionalProfileDocument>(
       default: false,
     },
 
+    isAvailableForConsultation: {
+      type: Boolean,
+      default: true, // Available by default
+    },
+
     rating: {
       type: Number,
       min: 0,

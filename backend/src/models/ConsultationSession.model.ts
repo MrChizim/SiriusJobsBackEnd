@@ -116,17 +116,17 @@ const consultationSessionSchema = new Schema<IConsultationSession>(
     selectedDuration: {
       type: Number,
       required: true,
-      min: 1800000, // Minimum 30 minutes
+      min: 3600000, // Minimum 1 hour
     },
     currentDuration: {
       type: Number,
       required: true,
-      min: 1800000,
+      min: 3600000,
     },
     durationHours: {
       type: Number,
       required: true,
-      min: 0.5, // 30 minutes minimum
+      min: 1,
     },
     pricePerHour: {
       type: Number,
@@ -135,7 +135,7 @@ const consultationSessionSchema = new Schema<IConsultationSession>(
     },
     minimumDuration: {
       type: Number,
-      default: 1800000, // 30 minutes
+      default: 3600000, // 1 hour
     },
     
     startedAt: {
@@ -168,7 +168,7 @@ const consultationSessionSchema = new Schema<IConsultationSession>(
       additionalHours: {
         type: Number,
         required: true,
-        min: 0.5,
+        min: 1,
       },
       additionalAmount: {
         type: Number,
@@ -258,8 +258,8 @@ consultationSessionSchema.methods.extendSession = function(
     throw new Error('Only active sessions can be extended');
   }
   
-  if (additionalHours < 0.5) {
-    throw new Error('Extension must be at least 30 minutes');
+  if (additionalHours < 1) {
+    throw new Error('Extension must be at least 1 hour');
   }
   
   const additionalMs = additionalHours * 3600000;

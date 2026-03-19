@@ -17,6 +17,8 @@ router.get('/analytics', authenticate, authorize('professional'), professionalCo
 router.get('/dashboard', authenticate, authorize('professional'), professionalController.getDashboardStats);
 router.get('/sessions', authenticate, authorize('professional'), professionalController.getMySessions);
 router.get('/sessions/:sessionId/messages', authenticate, authorize('professional'), professionalController.getSessionMessages);
+router.patch('/availability', authenticate, authorize('professional'), professionalController.setAvailability);
+router.get('/consultations/pending', authenticate, authorize('professional'), professionalController.getPendingConsultations);
 
 // Public booking/review flows
 router.post('/:id/book', professionalController.bookConsultation);

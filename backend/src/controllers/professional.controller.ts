@@ -408,3 +408,49 @@ export const getDashboardStats = asyncHandler(async (req: any, res: Response) =>
     totalReviews,
   });
 });
+
+/**
+ * Toggle availability for consultation
+ * PATCH /api/professionals/availability
+ */
+export const setAvailability = asyncHandler(async (req: any, res: Response) => {
+  const userId = req.user!.userId;
+  const { isAvailable } = req.body;
+
+  if (typeof isAvailable !== 'boolean') {
+    return sendError(res, 'isAvailable must be true or false', 400);
+  }
+
+  const profile = await ProfessionalProfile.findOneAndUpdate(
+    { userId },
+    { isAvailableForConsultation: isAvailable },
+    { new: true }
+  );
+
+  if (!profile) {
+    return sendNotFound(res, 'Professional profile not found');
+  }
+
+  return sendSuccess(res, {
+    isAvailableForConsultation: profile.isAvailableForConsultation,
+  }, isAvailable ? 'You are now available for consultations' : 'You are now unavailable for consultations');
+});
+
+/**
+ * Get pending consultation sessions for professional
+ * GET /api/professionals/consultations/pending
+ */
+export const getPendingConsultations = asyncHandler(async (req: any, res: Response) => {
+  const userId = req.user!.userId;
+
+  const sessions = await ConsultationSession.find({
+    professionalId: userId,
+    status: { $in: ['pending', 'active'] },
+    paymentStatus: 'completed',
+  })
+    .sort({ createdAt: -1 })
+    .limit(20)
+    .lean();
+
+  return sendSuccess(res, { sessions });
+});

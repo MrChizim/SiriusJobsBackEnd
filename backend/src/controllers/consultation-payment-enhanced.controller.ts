@@ -9,8 +9,8 @@ const PAYSTACK_SECRET_KEY = process.env.PAYSTACK_SECRET_KEY || '';
 const JWT_SECRET = process.env.JWT_SECRET || 'default-secret';
 
 // Pricing configuration
-const DEFAULT_PRICE_PER_HOUR = 300000; // 300000 kobo = ₦3,000 per hour (₦1,500 per 30 min)
-const MINIMUM_HOURS = 0.5; // 30 minutes minimum
+const DEFAULT_PRICE_PER_HOUR = 300000; // 300000 kobo = ₦3,000 per hour
+const MINIMUM_HOURS = 1;
 const MAXIMUM_HOURS = 8;
 
 interface PaystackVerifyResponse {
@@ -140,7 +140,7 @@ export const initializeConsultationPayment = async (req: any, res: any) => {
       currentDuration: durationMs,
       durationHours,
       pricePerHour,
-      minimumDuration: 1800000, // 30 minutes
+      minimumDuration: 3600000, // 1 hour
       sessionToken,
       isExtended: false,
       extensionCount: 0,
@@ -211,16 +211,12 @@ export const initializeConsultationPayment = async (req: any, res: any) => {
  */
 export const initializeSessionExtension = async (req: any, res: any) => {
   try {
-    // Accept either additionalMinutes (frontend) or additionalHours (legacy)
     const { sessionId, additionalHours: rawHours, additionalMinutes, email } = req.body;
 
-    // Resolve to hours (fractions supported: 0.5 = 30 min)
-    let additionalHours: number;
-    if (additionalMinutes != null) {
-      additionalHours = additionalMinutes / 60;
-    } else {
-      additionalHours = rawHours;
-    }
+    // Accept additionalMinutes from frontend (value="60" = 1hr, value="120" = 2hr)
+    const additionalHours: number = additionalMinutes != null
+      ? Math.round(additionalMinutes / 60)
+      : rawHours;
 
     // Validation
     if (!sessionId || !additionalHours) {
@@ -230,10 +226,10 @@ export const initializeSessionExtension = async (req: any, res: any) => {
       });
     }
 
-    if (additionalHours < 0.5) {
+    if (additionalHours < 1) {
       return res.status(400).json({
         success: false,
-        message: 'Extension must be at least 30 minutes',
+        message: 'Extension must be at least 1 hour',
       });
     }
 
