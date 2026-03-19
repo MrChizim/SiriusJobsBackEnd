@@ -23,6 +23,7 @@ import dashboardRoutes from './routes/dashboard.routes';
 import profilesRoutes from './routes/profiles.routes';
 import applicationsRoutes from './routes/applications.routes';
 import publicRoutes from './routes/public.routes';
+import adminRoutes from './routes/admin.routes';
 import { apiLimiter, speedLimiter } from './middleware/rateLimiter';
 import { logger } from './lib/logger';
 import { errorHandler } from './middleware/error.middleware';
@@ -91,6 +92,7 @@ app.use('/api/v2/payments', paymentRoutes);
 app.use('/api/v2/services', servicesRoutes);
 app.use('/api/v2/alerts', alertsRoutes);
 app.use('/api/v2/public', publicRoutes);
+app.use('/api/admin', adminRoutes);
 
 // 404 handler - must come before error handler
 app.use((_req, res) => {
