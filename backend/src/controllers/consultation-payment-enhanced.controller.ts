@@ -275,7 +275,7 @@ export const initializeSessionExtension = async (req: any, res: any) => {
           purpose: 'session_extension',
           originalReference: session.paymentReference,
         },
-        callback_url: `${process.env.FRONTEND_URL}/consultation/session?sessionId=${sessionId}&extended=true`,
+        callback_url: `${process.env.FRONTEND_URL}/consultation-verify.html?reference=${reference}`,
       },
       {
         headers: {
@@ -365,9 +365,9 @@ export const verifyConsultationPayment = async (req: any, res: any) => {
     }
 
     if (isExtension) {
-      // Handle extension
-      const metadata = verifyResponse.data.data as any;
-      const additionalHours = metadata.metadata?.additionalHours || 1;
+      // Handle extension — Paystack returns metadata at data.metadata (not data.data.metadata)
+      const txData = verifyResponse.data.data as any;
+      const additionalHours = txData.metadata?.additionalHours || 1;
 
       session.extendSession(additionalHours, reference);
       await session.save();
