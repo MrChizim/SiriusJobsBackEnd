@@ -36,6 +36,7 @@ export interface IUser {
   accountType: AccountType;
   googleId?: string;
   isVerified: boolean;
+  isAvailableForConsultation?: boolean;
   isActive: boolean;
   createdAt?: Date;
   updatedAt?: Date;
@@ -105,6 +106,7 @@ export interface IProfessionalProfile {
   professionalEarning: number; // ₦2,500
   totalEarnings: number;
   isVerified: boolean;
+  isAvailableForConsultation?: boolean;
   rating?: number;
   totalReviews?: number;
   payoutAccount?: {
