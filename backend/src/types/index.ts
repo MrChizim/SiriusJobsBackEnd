@@ -35,6 +35,7 @@ export interface IUser {
   password: string;
   accountType: AccountType;
   googleId?: string;
+  walletBalance?: number;
   isVerified: boolean;
   isAvailableForConsultation?: boolean;
   isActive: boolean;
@@ -105,6 +106,7 @@ export interface IProfessionalProfile {
   platformFee: number; // ₦500
   professionalEarning: number; // ₦2,500
   totalEarnings: number;
+  walletBalance?: number;
   isVerified: boolean;
   isAvailableForConsultation?: boolean;
   rating?: number;
