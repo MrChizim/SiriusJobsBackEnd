@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import { ConsultationSession } from '../models/ConsultationSession.model';
 import { ConsultationClient } from '../models/ConsultationClient.model';
+import { ProfessionalProfile } from '../models/ProfessionalProfile.model';
 import { v4 as uuidv4 } from 'uuid';
 import axios from 'axios';
 import jwt from 'jsonwebtoken';
@@ -474,6 +475,11 @@ export const getSessionStatus = async (req: any, res: any) => {
     if (session.isExpired() && session.status === 'active') {
       session.status = 'expired';
       await session.save();
+                // Credit professional wallet (minus ₦500 platform fee in kobo)
+        await ProfessionalProfile.findOneAndUpdate(
+          { userId: session.professionalId.toString() },
+          { $inc: { walletBalance: session.paymentAmount - 50000 } }
+        );
 
       // Update client active sessions
       await ConsultationClient.findByIdAndUpdate(session.clientId, {
