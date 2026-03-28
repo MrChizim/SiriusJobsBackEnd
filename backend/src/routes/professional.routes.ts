@@ -28,4 +28,7 @@ router.post('/:id/review', professionalController.submitReview);
 router.get('/', professionalController.getProfessionals);
 router.get('/:id', professionalController.getProfessionalById);
 
+// Payout withdrawal
+router.post('/withdraw', authenticate, authorize('professional'), professionalController.withdrawFunds);
+
 export default router;

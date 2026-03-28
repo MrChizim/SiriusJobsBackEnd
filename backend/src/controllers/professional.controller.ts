@@ -4,6 +4,7 @@
  */
 
 import { Response } from 'express';
+import axios from 'axios';
 import { z } from 'zod';
 import { ProfessionalProfile } from '../models/ProfessionalProfile.model';
 import { User } from '../models/User.model';
@@ -454,4 +455,49 @@ export const getPendingConsultations = asyncHandler(async (req: any, res: Respon
     .lean();
 
   return sendSuccess(res, { sessions });
+});
+
+/**
+ * Withdraw wallet balance
+ * POST /api/professionals/withdraw
+ */
+export const withdrawFunds = asyncHandler(async (req: any, res: Response) => {
+  const userId = req.user!.userId;
+  const { accountNumber, bankCode, accountName } = req.body;
+
+  if (!accountNumber || !bankCode || !accountName) {
+    return sendError(res, 'Account number, bank code and account name are required', 400);
+  }
+
+  const profile = await ProfessionalProfile.findOne({ userId });
+  if (!profile) {
+    return sendError(res, 'Professional profile not found', 404);
+  }
+
+  if (!profile.walletBalance || profile.walletBalance <= 0) {
+    return sendError(res, 'No balance to withdraw', 400);
+  }
+
+  try {
+    const recipientRes = await axios.post(
+      'https://api.paystack.co/transferrecipient',
+      { type: 'nuban', name: accountName, account_number: accountNumber, bank_code: bankCode, currency: 'NGN' },
+      { headers: { Authorization: `Bearer ${process.env.PAYSTACK_SECRET_KEY}` } }
+    );
+
+    const recipientCode = recipientRes.data.data.recipient_code;
+
+    await axios.post(
+      'https://api.paystack.co/transfer',
+      { source: 'balance', amount: profile.walletBalance, recipient: recipientCode, reason: 'Professional payout' },
+      { headers: { Authorization: `Bearer ${process.env.PAYSTACK_SECRET_KEY}` } }
+    );
+
+    profile.walletBalance = 0;
+    await profile.save();
+
+    return sendSuccess(res, {}, 'Withdrawal initiated successfully');
+  } catch (error: any) {
+    return sendError(res, error?.response?.data?.message || 'Withdrawal failed', 500);
+  }
 });
